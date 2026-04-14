@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/ahmedessam1197/Todo-App.git', branch: 'main'
