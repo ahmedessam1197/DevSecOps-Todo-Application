@@ -8,14 +8,9 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git branch: 'main', url: 'https://github.com/ahmedessam1197/Todo-App.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
+                sh 'ls -la'
                 sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
             }
         }
