@@ -93,25 +93,6 @@ Metrics monitored:
 
 ---
 
-# Project Structure
-
-```
-todo-app
-│
-├── app.py
-├── requirements.txt
-├── Dockerfile
-├── Jenkinsfile
-│
-└── Kubernetes
-    ├── deployment-app.yml
-    ├── service.yml
-    ├── secret.yml
-    ├── hpa.yml
-```
-
----
-
 # How to Run the Project
 
 Clone the repository
