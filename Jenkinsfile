@@ -1,57 +1,46 @@
-
-
 pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "ahmed277/todo-app:latest"
+        DOCKER_IMAGE = "ahmed277/todo-app"
+        DOCKER_TAG = "latest"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/ahmedessam1197/Todo-App.git'
+                git 'https://github.com/YOUR_REPO/todo-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME} ./Docker"
+                sh 'docker build -t $DOCKER_IMAGE:$DOCKER_TAG .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push $IMAGE_NAME
-                    '''
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                    sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+                    sh 'docker logout'
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                    kubectl apply -f Kubernetes/ --validate=false
-                '''
+                sh 'kubectl apply -f Kubernetes/'
             }
         }
-    }
 
-    post {
-        success {
-            echo "Pipeline SUCCESS"
+        stage('Cleanup') {
+            steps {
+                sh 'docker system prune -f'
+            }
         }
 
-        failure {
-            echo "Pipeline FAILED"
-        }
     }
 }
